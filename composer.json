@@ -1,0 +1,30 @@
+{
+  "name": "uhin/ccda-support",
+  "description": "A library providing data objects to interact with Consolidated Clinical Document Architecture (C-CDA) data.",
+  "license": "MIT",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Mark Chavez",
+      "email": "mchavez@uhin.org"
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "ext-json": "^7",
+    "ext-libxml": "^7",
+    "ext-SimpleXML": "^7",
+    "ext-xml": "^7",
+    "ext-xmlreader": "^7",
+    "php": "^7"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Uhin\\Ccda\\": "src/"
+    }
+  }
+}
