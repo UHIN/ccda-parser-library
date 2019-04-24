@@ -5,47 +5,76 @@ namespace Uhin\Ccda\Models;
 class CcdaDocumentHeader extends CcdaDocumentPortion
 {
     protected $knownAttributes = [
+//        'author',
         'code',
+        'confidentialityCode',
+//        'custodian',
+//        'documentationOf',
         'effectiveTime',
         'id',
+        'languageCode',
         'realmCode',
+//        'recordTarget',
         'templateId',
         'title',
         'typeId',
     ];
 
+    protected function get_author(): array
+    {
+        // @todo Insert Functionality Here
+    }
+
     protected function get_code(): array
     {
-        return [
-            'code'          => trim((string) $this->parentDocument->simpleXmlElement->code->attributes()->code),
-            'codeSystem'    => trim((string) $this->parentDocument->simpleXmlElement->code->attributes()->codeSystem),
-            'displayName'   => trim((string) $this->parentDocument->simpleXmlElement->code->attributes()->displayName),
-        ];
+        return $this->parseElementAttributesIntoArray($this->parentDocument->simpleXmlElement->code);
+    }
+
+    protected function get_confidentialityCode(): array
+    {
+        return $this->parseElementAttributesIntoArray($this->parentDocument->simpleXmlElement->confidentialityCode);
+    }
+
+    protected function get_custodian(): array
+    {
+        // @todo Insert Functionality Here
+    }
+
+    protected function get_documentationOf(): array
+    {
+        // @todo Insert Functionality Here
     }
 
     protected function get_effectiveTime(): string
     {
-        return trim((string) trim((string) $this->parentDocument->simpleXmlElement->effectiveTime->attributes()->value));
+        return $this->parseElementSingleAttribute($this->parentDocument->simpleXmlElement->effectiveTime, 'value');
     }
 
     protected function get_id(): array
     {
-        return [
-            'extension'     => trim((string) $this->parentDocument->simpleXmlElement->id->attributes()->extension),
-            'root'          => trim((string) $this->parentDocument->simpleXmlElement->id->attributes()->root),
-        ];
+        return $this->parseElementAttributesIntoArray($this->parentDocument->simpleXmlElement->id);
+    }
+
+    protected function get_languageCode(): string
+    {
+        return $this->parseElementSingleAttribute($this->parentDocument->simpleXmlElement->languageCode, 'code');
     }
 
     protected function get_realmCode(): string
     {
-        return trim((string) $this->parentDocument->simpleXmlElement->realmCode->attributes()->code);
+        return $this->parseElementSingleAttribute($this->parentDocument->simpleXmlElement->realmCode, 'code');
+    }
+
+    protected function get_recordTarget(): array
+    {
+        // @todo Insert Functionality Here
     }
 
     protected function get_templateId(): array
     {
         $return = [];
         foreach ($this->parentDocument->simpleXmlElement->templateId as $currentTemplateId) { // Loop through Template ID Fields
-            $return[] = trim((string) $currentTemplateId->attributes()->root);
+            $return[] = $this->parseElementSingleAttribute($currentTemplateId, 'root');
         } // End of Loop through Template ID Fields
         return $return;
     }
@@ -57,9 +86,6 @@ class CcdaDocumentHeader extends CcdaDocumentPortion
 
     protected function get_typeId(): array
     {
-        return [
-            'extension'     => trim((string) $this->parentDocument->simpleXmlElement->typeId->attributes()->extension),
-            'root'          => trim((string) $this->parentDocument->simpleXmlElement->typeId->attributes()->root),
-        ];
+        return $this->parseElementAttributesIntoArray($this->parentDocument->simpleXmlElement->typeId);
     }
 }

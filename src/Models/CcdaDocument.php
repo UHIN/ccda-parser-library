@@ -2,6 +2,7 @@
 
 namespace Uhin\Ccda\Models;
 
+use Uhin\Ccda\Exceptions\IllegalOperation;
 use Uhin\Ccda\Exceptions\InvalidSourceXmlData;
 
 class CcdaDocument
@@ -82,10 +83,21 @@ class CcdaDocument
                 break;
 
             default:
-                $return = null;
+                if ($this->header->isKnownAttribute($attributeName)) { // Check if Getting Known Value
+                    $return = $this->header->{$attributeName};
+                } elseif ($this->body->isKnownAttribute($attributeName)) { // Middle of Check if Getting Known Value
+                    $return = $this->body->{$attributeName};
+                } else { // Middle of Check if Getting Known Value
+                    $return = null;
+                } // End of Check if Getting Known Value
                 break;
 
         } // End of Check Attribute Name Parameter
         return $return;
+    }
+
+    public function __set(string $attributeName, $attributeValue)
+    {
+        throw new IllegalOperation(sprintf('%s does not support setting values (%s)', get_called_class(), $attributeName));
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Uhin\Ccda\Models;
 
+use Uhin\Ccda\Exceptions\IllegalOperation;
+
 abstract class CcdaDocumentPortion
 {
     protected $parentDocument;
@@ -26,6 +28,11 @@ abstract class CcdaDocumentPortion
         return $return;
     }
 
+    public function __set(string $attributeName, $attributeValue)
+    {
+        throw new IllegalOperation(sprintf('%s does not support setting values (%s)', get_called_class(), $attributeName));
+    }
+
     public function toArray(): array
     {
         $this->loadAllValues();
@@ -44,5 +51,41 @@ abstract class CcdaDocumentPortion
     public function isKnownAttribute(string $attributeName): bool
     {
         return in_array($attributeName, $this->knownAttributes);
+    }
+
+    protected function parseElementIntoComponentsArray(\SimpleXMLElement $simpleXmlElement): array
+    {
+        $return = [];
+        $attributesArray = $this->parseElementAttributesIntoArray($simpleXmlElement);
+        if (count($attributesArray)) { // Check for Parsed Attributes
+            $return['attributes'] = $attributesArray;
+        } // End of Check for Parsed Attributes
+        unset($attributesArray);
+        $elementValue = trim((string) $simpleXmlElement);
+        if (!empty($elementValue)) { // Check for Element Value
+            $return['value'] = $elementValue;
+        } // End of Check for Element Value
+        unset($elementValue);
+        if ($simpleXmlElement->count()) { // Check for Child Elements
+            $return['children'] = [];
+            foreach ($simpleXmlElement->children() as $currentchild) { // Loop through Child Elements
+                $return['children'][] = $this->parseElementIntoComponentsArray($currentchild);
+            } // End of Loop through Child Elements
+        } // End of Check for Child Elements
+        return $return;
+    }
+
+    protected function parseElementAttributesIntoArray(\SimpleXMLElement $simpleXmlElement): array
+    {
+        $return = [];
+        foreach ($simpleXmlElement->attributes() as $currentAttributeName => $currentAttributeValue) { // Loop through Attributes
+            $return[$currentAttributeName] = (string) $currentAttributeValue;
+        } // End of Loop through Attributes
+        return $return;
+    }
+
+    protected function parseElementSingleAttribute(\SimpleXMLElement $simpleXmlElement, string $attributeName): string
+    {
+        return trim((string) $simpleXmlElement->attributes()->{$attributeName});
     }
 }
