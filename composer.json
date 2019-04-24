@@ -1,5 +1,5 @@
 {
-  "name": "uhin/ccda-support",
+  "name": "uhin/ccda-parser",
   "description": "A library providing data objects to interact with Consolidated Clinical Document Architecture (C-CDA) data.",
   "license": "MIT",
   "type": "library",
@@ -13,10 +13,7 @@
   "prefer-stable": true,
   "require": {
     "ext-json": "^7",
-    "ext-libxml": "^7",
     "ext-SimpleXML": "^7",
-    "ext-xml": "^7",
-    "ext-xmlreader": "^7",
     "php": "^7"
   },
   "require-dev": {
