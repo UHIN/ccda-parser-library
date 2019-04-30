@@ -53,6 +53,50 @@ abstract class CcdaDocumentPortion
         return in_array($attributeName, $this->knownAttributes);
     }
 
+    public function parseElement(\SimpleXMLElement $simpleXmlElement, bool $setReturnArrayIndexToElementName = true): array
+    {
+        $return = [];
+        $value = trim((string) $simpleXmlElement);
+        $attributes = $this->parseElementAttributesIntoNamespacedArray($simpleXmlElement);
+        $children = $this->parseElementChildrenIntoNamespacedArray($simpleXmlElement);
+        foreach (array_keys($this->parentDocument->namespaces) as $currentNamespacePrefix) { // Loop through Namespaces to Merge Element Data
+            if (empty($currentNamespacePrefix)) { // Check for Namespaced or Global
+
+                // Global Data
+                if (!empty($attributes[$currentNamespacePrefix])) { // Check for Attributes in Namespace
+                    $return = array_merge($return, $attributes[$currentNamespacePrefix]);
+                } // End of Check for Attributes in Namespace
+                if (!empty($children[$currentNamespacePrefix])) { // Check for Children in Namespace
+                    $return = array_merge($return, $children[$currentNamespacePrefix]);
+                } // End of Check for Children in Namespace
+
+            } else { // Middle of Check for Namespaced or Global
+
+                // Namespaced Data
+                $return[$currentNamespacePrefix] = [];
+                if (!empty($attributes[$currentNamespacePrefix])) { // Check for Attributes in Namespace
+                    $return[$currentNamespacePrefix] = $attributes[$currentNamespacePrefix];
+                } // End of Check for Attributes in Namespace
+                if (!empty($children[$currentNamespacePrefix])) { // Check for Children in Namespace
+                    $return[$currentNamespacePrefix] = array_merge($return[$currentNamespacePrefix], $children[$currentNamespacePrefix]);
+                } // End of Check for Children in Namespace
+                if (empty($return[$currentNamespacePrefix])) { // Purge Empty Namespace Containers from Return Value
+                    unset($return[$currentNamespacePrefix]);
+                } // End of Purge Empty Namespace Containers from Return Value
+
+            } // End of Check for Namespaced or Global
+        } // End of Loop through Namespaces to Merge Element Data
+        if (!empty($value)) { // Check for Value
+            $return['value'] = $value;
+        } // End of Check for Value
+        return $return;
+    }
+
+    protected function consolidateElementData(string $value, array $attributes): array
+    {
+        return array_merge();
+    }
+
     protected function parseElementIntoComponentsArray(\SimpleXMLElement $simpleXmlElement): array
     {
         $return = [];
@@ -81,6 +125,36 @@ abstract class CcdaDocumentPortion
         foreach ($simpleXmlElement->attributes() as $currentAttributeName => $currentAttributeValue) { // Loop through Attributes
             $return[$currentAttributeName] = (string) $currentAttributeValue;
         } // End of Loop through Attributes
+        return $return;
+    }
+
+    public function parseElementAttributesIntoNamespacedArray(\SimpleXMLElement $simpleXmlElement): array
+    {
+        $return = [];
+        foreach (array_keys($this->parentDocument->namespaces) as $currentNamespacePrefix) { // Loop through Namespaces
+            $return[$currentNamespacePrefix] = [];
+            foreach ($simpleXmlElement->attributes($currentNamespacePrefix, true) as $currentAttribute) { // Loop through Element Attributes in Current Namespace
+                $return[$currentNamespacePrefix]['attribute:' . $currentAttribute->getName()] = (string) $currentAttribute;
+            } // End of Loop through Element Attributes in Current Namespace
+            if (empty($return[$currentNamespacePrefix])) { // Remove Namespaces that Have No Data/Attributes
+                unset($return[$currentNamespacePrefix]);
+            } // End of Remove Namespaces that Have No Data/Attributes
+        } // End of Loop through Namespaces
+        return $return;
+    }
+
+    public function parseElementChildrenIntoNamespacedArray(\SimpleXMLElement $simpleXmlElement): array
+    {
+        $return = [];
+        foreach (array_keys($this->parentDocument->namespaces) as $currentNamespacePrefix) { // Loop through Namespaces
+            $return[$currentNamespacePrefix] = [];
+            foreach ($simpleXmlElement->children($currentNamespacePrefix, true) as $currentChild) { // Loop through Element Children in Current Namespace
+                $return[$currentNamespacePrefix][$currentChild->getName()] = $this->parseElement($currentChild);
+            } // End of Loop through Element Children in Current Namespace
+            if (empty($return[$currentNamespacePrefix])) { // Remove Namespaces that Have No Data/Attributes
+                unset($return[$currentNamespacePrefix]);
+            } // End of Remove Namespaces that Have No Data/Attributes
+        } // End of Loop through Namespaces
         return $return;
     }
 

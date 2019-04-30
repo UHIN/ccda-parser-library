@@ -41,6 +41,8 @@ class CcdaDocument
 
     protected $simpleXmlElement;
 
+    protected $namespaces;
+
     protected $header;
 
     protected $body;
@@ -48,6 +50,7 @@ class CcdaDocument
     protected function __construct(\SimpleXMLElement $simpleXmlElement)
     {
         $this->simpleXmlElement = $simpleXmlElement;
+        $this->namespaces = $this->simpleXmlElement->getNamespaces(true);
         $this->header = new CcdaDocumentHeader($this);
         $this->body = new CcdaDocumentBody($this);
     }
@@ -76,6 +79,7 @@ class CcdaDocument
     {
         switch ($attributeName) { // Check Attribute Name Parameter
 
+            case 'namespaces':
             case 'simpleXmlElement':
             case 'header':
             case 'body':
@@ -99,5 +103,10 @@ class CcdaDocument
     public function __set(string $attributeName, $attributeValue)
     {
         throw new IllegalOperation(sprintf('%s does not support setting values (%s)', get_called_class(), $attributeName));
+    }
+
+    public function convertXmlToJson(): string
+    {
+        return json_encode([$this->simpleXmlElement->getName() => $this->header->parseElement($this->simpleXmlElement)]);
     }
 }

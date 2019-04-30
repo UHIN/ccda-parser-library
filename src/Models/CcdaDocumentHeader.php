@@ -67,7 +67,26 @@ class CcdaDocumentHeader extends CcdaDocumentPortion
 
     protected function get_recordTarget(): array
     {
-        // @todo Insert Functionality Here
+        $return = $this->parseElementAttributesIntoArray($this->parentDocument->simpleXmlElement->recordTarget);
+
+        $return['patientRole'] = $this->parseElementAttributesIntoArray($this->parentDocument->simpleXmlElement->recordTarget->patientRole);
+
+        if ($this->parentDocument->simpleXmlElement->recordTarget->patientRole->id->count()) { // Check for Patient Role ID Entries
+            $return['patientRole']['id'] = [];
+            foreach ($this->parentDocument->simpleXmlElement->recordTarget->patientRole->id as $currentPatientRoleId) { // Loop through Patient Role ID Entries
+                $return['patientRole']['id'][] = $this->parseElementAttributesIntoArray($currentPatientRoleId);
+            } // End of Loop through Patient Role ID Entries
+            unset($currentPatientRoleId);
+        } // End of Check for Patient Role ID Entries
+
+        if (isset($this->parentDocument->simpleXmlElement->recordTarget->patientRole->addr)) { // Check for Patient Role Address
+            $return['patientRole']['addr'] = $this->parseElementAttributesIntoArray($this->parentDocument->simpleXmlElement->recordTarget->patientRole->addr);
+            foreach ($this->parentDocument->simpleXmlElement->recordTarget->patientRole->addr->children() as $currentAddressPart) { // Loop through Address Parts
+                $return['patientRole']['addr'][$currentAddressPart->getName()] = trim((string) $currentAddressPart);
+            } // End of Loop through Address Parts
+        } // End of Check for Patient Role Address
+
+        return $return;
     }
 
     protected function get_templateId(): array
