@@ -13,7 +13,7 @@
   "prefer-stable": true,
   "require": {
     "ext-json": "^1",
-    "ext-SimpleXML": "^7",
+    "ext-simplexml": "^7",
     "php": "^7"
   },
   "require-dev": {
