@@ -4,6 +4,7 @@ namespace Uhin\Ccda\Models;
 
 use Uhin\Ccda\Exceptions\IllegalOperation;
 use Uhin\Ccda\Exceptions\InvalidSourceXmlData;
+use Uhin\Ccda\Models\Validation\ValidationFactory;
 
 class CcdaDocument
 {
@@ -67,7 +68,7 @@ class CcdaDocument
      */
     protected static function validateSimpleXmlElement(\SimpleXMLElement $simpleXmlElement): bool
     {
-        return true; // @todo Add CCDA XML Document Validation Here
+        return ValidationFactory::validateSimpleXmlElement($simpleXmlElement);
     }
 
     /**
@@ -238,6 +239,8 @@ class CcdaDocument
 
     /**
      * This method triggers parsing of the SimpleXMLElement and stores the data as an (array) attribute on this object.
+     * The reason this method exists is to allow a mechanism for "lazy loading" of the XML data into the array (i.e. dictionary)
+     * format in case the element attribute prefix or prefix delimiter ar changed from their default values.
      *
      * @return void
      * @see CcdaDocument::$data
