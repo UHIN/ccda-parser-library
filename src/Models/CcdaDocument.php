@@ -65,7 +65,7 @@ class CcdaDocument
      * @return bool
      * @see CcdaDocument::getDocumentFromSimpleXmlElement()
      */
-    protected function validateSimpleXmlElement(\SimpleXMLElement $simpleXmlElement): bool
+    protected static function validateSimpleXmlElement(\SimpleXMLElement $simpleXmlElement): bool
     {
         return true; // @todo Add CCDA XML Document Validation Here
     }
@@ -128,7 +128,6 @@ class CcdaDocument
     {
         $this->simpleXmlElement = $simpleXmlElement;
         $this->namespaces = $this->simpleXmlElement->getNamespaces(true);
-        $this->data = [$this->simpleXmlElement->getName() => $this->parseElement($this->simpleXmlElement)];
     }
 
     /**
@@ -238,15 +237,34 @@ class CcdaDocument
     }
 
     /**
+     * This method triggers parsing of the SimpleXMLElement and stores the data as an (array) attribute on this object.
+     *
+     * @return void
+     * @see CcdaDocument::$data
+     * @see CcdaDocument::parseElement()
+     */
+    public function convertXml(): void
+    {
+        if (!empty($this->data)) { // Check for Previously-Converted Data
+            $this->data = null;
+        } // End of Check for Previously-Converted Data
+        $this->data = [$this->simpleXmlElement->getName() => $this->parseElement($this->simpleXmlElement)];
+    }
+
+    /**
      * Getter method for the array (i.e. dictionary) version of the SimpleXMLElement document used in the factory methods.
      *
      * @return array
      * @see CcdaDocument::$data
+     * @see CcdaDocument::convertXml()
      * @see CcdaDocument::toStdClass()
      * @see CcdaDocument::toJson()
      */
     public function toArray(): array
     {
+        if (empty($this->data)) { // Make Sure Data Has Been Parsed
+            $this->convertXml();
+        } // End of Make Sure Data Has Been Parsed
         return $this->data;
     }
 
@@ -297,14 +315,20 @@ class CcdaDocument
      * @see CcdaDocument::$data
      * @see CcdaDocument::$elementAttributePrefix
      * @see CcdaDocument::$elementAttributePrefixDelimiter
+     * @see CcdaDocument::convertXml()
      */
     public function __get(string $attributeName)
     {
         switch ($attributeName) { // Check Attribute Name Parameter
 
+            case 'data':
+                if (empty($this->data)) { // Make Sure Data Has Been Parsed
+                    $this->convertXml();
+                } // End of Make Sure Data Has Been Parsed
+                // Break Statement Intentionally Ommitted to Allow Pass-Through
+
             case 'namespaces':
             case 'simpleXmlElement':
-            case 'data':
             case 'elementAttributePrefix':
             case 'elementAttributePrefixDelimiter':
                 $return = $this->{$attributeName};
@@ -333,7 +357,11 @@ class CcdaDocument
 
             case 'elementAttributePrefix':
             case 'elementAttributePrefixDelimiter':
-                return $this->{$attributeName} = (string) $attributeValue;
+                $return = $this->{$attributeName} = (string) $attributeValue;
+                if (!empty($this->data)) { // Check for Previously-Converted Data
+                    $this->data = null; // Clear Previously-Converted Data Since the Element Attribute Prefix or Delimiter is Changing
+                } // End of Check for Previously-Converted Data
+                return $return;
                 break;
 
             default:
