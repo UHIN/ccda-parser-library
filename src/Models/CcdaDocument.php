@@ -91,7 +91,7 @@ class CcdaDocument
      * Contains the C-CDA document in array (i.e. dictionary) format
      *
      * @var array
-     * @see CcdaDocument::__construct()
+     * @see CcdaDocument::convertXml()
      * @see CcdaDocument::parseElement()
      * @see CcdaDocument::toArray()
      */
@@ -328,7 +328,7 @@ class CcdaDocument
                 if (empty($this->data)) { // Make Sure Data Has Been Parsed
                     $this->convertXml();
                 } // End of Make Sure Data Has Been Parsed
-                // Break Statement Intentionally Ommitted to Allow Pass-Through
+                // Break Statement Intentionally Omitted to Allow Pass-Through
 
             case 'namespaces':
             case 'simpleXmlElement':
