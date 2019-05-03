@@ -1,5 +1,6 @@
 ### Project ###
 vendor
+.phpunit.result.cache
 
 ### OSX ###
 # General
