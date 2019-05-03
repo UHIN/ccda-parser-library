@@ -24,4 +24,16 @@
 
 * [Clinical Document Architecture (CDA) Wikipedia Entry](https://en.wikipedia.org/wiki/Clinical_Document_Architecture)
 
-## Contact Us
+## About Us
+
+Utah Health Information Network (UHIN) is a non-profit organization in the healthcare industry with goals of improving patient outcomes and reducing healthcare costs. If you are using any of our open source projects or would like to know more about us, we would love to hear from you.
+
+[Homepage](https://www.uhin.org/)
+[Email](mailto:customerservice@uhin.org)
+
+Phone: 801-716-5901
+Toll Free: 877-693-3071
+
+Address:
+1226 E 6600 S
+Murray, UT 84121
