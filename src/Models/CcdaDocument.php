@@ -60,11 +60,12 @@ class CcdaDocument
      */
     public static function getDocumentFromXmlString(string $xmlString): CcdaDocument
     {
+        libxml_use_internal_errors(true); // Disable Warnings for XML Errors
         $simpleXmlElement = simplexml_load_string($xmlString);
         if ($simpleXmlElement instanceof \SimpleXMLElement) { // Verify SimpleXMLElement Object Created
             return static::getDocumentFromSimpleXmlElement($simpleXmlElement);
         } else { // Middle of Verify SimpleXMLElement Object Created
-            throw new InvalidSourceXmlData('Invalid source XML string: ' . $xmlString);
+            throw new InvalidSourceXmlData('Invalid source XML string: ' . (empty($xmlString) ? '[empty]' : $xmlString));
         } // End of Verify SimpleXMLElement Object Created
     }
 
