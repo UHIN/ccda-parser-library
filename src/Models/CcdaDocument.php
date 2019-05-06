@@ -3,6 +3,7 @@
 namespace Uhin\Ccda\Models;
 
 use Uhin\Ccda\Exceptions\IllegalOperation;
+use Uhin\Ccda\Exceptions\InvalidParameter;
 use Uhin\Ccda\Exceptions\InvalidSourceXmlData;
 use Uhin\Ccda\Models\Validation\ValidationFactory;
 
@@ -27,17 +28,26 @@ class CcdaDocument
      *
      * @param string $filepath
      * @return CcdaDocument
+     * @throws InvalidParameter
      * @throws InvalidSourceXmlData
      * @see CcdaDocument::getDocumentFromSimpleXmlElement()
      */
     public static function getDocumentFromFilepath(string $filepath): CcdaDocument
     {
-        $simpleXmlElement = simplexml_load_file($filepath);
-        if ($simpleXmlElement instanceof \SimpleXMLElement) { // Verify SimpleXMLElement Object Created
-            return static::getDocumentFromSimpleXmlElement($simpleXmlElement);
-        } else { // Middle of Verify SimpleXMLElement Object Created
-            throw new InvalidSourceXmlData('Invalid source XML file: ' . $filepath);
-        } // End of Verify SimpleXMLElement Object Created
+        if (is_file($filepath)) { // Verify Filepath Parameter is a File
+            if (is_readable($filepath)) { // Verify Filepath Parameter Target is Readable
+                $simpleXmlElement = simplexml_load_file($filepath);
+                if ($simpleXmlElement instanceof \SimpleXMLElement) { // Verify SimpleXMLElement Object Created
+                    return static::getDocumentFromSimpleXmlElement($simpleXmlElement);
+                } else { // Middle of Verify SimpleXMLElement Object Created
+                    throw new InvalidSourceXmlData('Invalid source XML file: ' . $filepath);
+                } // End of Verify SimpleXMLElement Object Created
+            } else { // Middle of Verify Filepath Parameter Target is Readable
+                throw new InvalidParameter(sprintf('File not readable: %s', $filepath));
+            } // End of Verify Filepath Parameter Target is Readable
+        } else { // Middle of Verify Filepath Parameter is a File
+            throw new InvalidParameter(sprintf('File not found: %s', $filepath));
+        } // End of Verify Filepath Parameter is a File
     }
 
     /**

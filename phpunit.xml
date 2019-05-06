@@ -9,7 +9,7 @@
     </php>
     <testsuites>
         <testsuite name="factoryMethods">
-            <file>tests/</file>
+            <file>tests/CcdaDocumentFactoryMethodFilepathTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>
