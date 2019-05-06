@@ -5,6 +5,7 @@ namespace Uhin\Ccda\Tests;
 use Faker\Factory as FakerFactory;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
+use Uhin\Ccda\Models\CcdaDocument;
 
 abstract class BaseCcdaParserTestCase extends TestCase
 {
@@ -39,6 +40,7 @@ abstract class BaseCcdaParserTestCase extends TestCase
      * Generates a random (fake) string that is valid XML.
      *
      * @return string
+     * @throws \ReflectionException
      * @see BaseCcdaParserTestCase::getSimpleXmlElement()
      * @see \SimpleXMLElement::asXML()
      */
@@ -48,15 +50,89 @@ abstract class BaseCcdaParserTestCase extends TestCase
     }
 
     /**
+     * Generates a random (fake) SimpleXMLElement object and a corresponding array to how it should be parsed.
+     *
+     * @return array
+     * @throws \ReflectionException
+     * @see \SimpleXMLElement::addAttribute()
+     * @see \SimpleXMLElement::addChild()
+     * @see BaseCcdaParserTestCase::getRestrictedObjectPropertyDefaultValue()
+     */
+    protected function getSimpleXmlElementAndDataArray(): array
+    {
+        $topLevelElementName = $this->faker->word;
+        $globalAttributeName = $this->faker->word;
+        $globalAttributeValue = $this->faker->text;
+        $globalChildName = $this->faker->word;
+        $globalChildValue = $this->faker->text;
+        $namespaceName = $this->faker->word;
+        $namespaceUrl = 'http://www.w3.org/2001/XMLSchema-instance';
+        $namespacedAttributeName = $this->faker->word;
+        $namespacedAttributeValue = $this->faker->text;
+        $namespacedChildName = $this->faker->word;
+        $namespacedChildValue = $this->faker->text;
+        $simpleXmlElement = new \SimpleXMLElement(sprintf('<%s />', $topLevelElementName));
+        $simpleXmlElement->addAttribute($globalAttributeName, $globalAttributeValue);
+        $simpleXmlElement->addChild($globalChildName, $globalChildValue);
+        $simpleXmlElement->addAttribute(sprintf('%s:%s', $namespaceName, $namespacedAttributeName), $namespacedAttributeValue, $namespaceUrl);
+        $simpleXmlElement->addChild(sprintf('%s:%s', $namespaceName, $namespacedChildName), $namespacedChildValue, $namespaceUrl);
+        $elementAttributePrefix = $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefix');
+        $elementAttributePrefixDelimiter = $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefixDelimiter');
+        $array = [$topLevelElementName => [
+            sprintf('%s%s%s', $elementAttributePrefix, $elementAttributePrefixDelimiter, $globalAttributeName) => $globalAttributeValue,
+            $globalChildName => ['value' => $globalChildValue],
+            $namespaceName => [
+                sprintf('%s%s%s', $elementAttributePrefix, $elementAttributePrefixDelimiter, $namespacedAttributeName) => $namespacedAttributeValue,
+                $namespacedChildName => ['value' => $namespacedChildValue],
+            ],
+        ]];
+        return [
+            'array'             => $array,
+            'simpleXmlElement'  => $simpleXmlElement,
+        ];
+    }
+
+    /**
      * Generates a random (fake) SimpleXMLElement object.
      *
      * @return \SimpleXMLElement
+     * @throws \ReflectionException
+     * @see BaseCcdaParserTestCase::getSimpleXmlElementAndDataArray()
      */
     protected function getSimpleXmlElement(): \SimpleXMLElement
     {
-        $simpleXmlElement = new \SimpleXMLElement(sprintf('<%s />', $this->faker->word));
-        $simpleXmlElement->addAttribute($this->faker->word, $this->faker->text);
-        $simpleXmlElement->addChild($this->faker->word, $this->faker->text);
-        return $simpleXmlElement;
+        return $this->getSimpleXmlElementAndDataArray()['simpleXmlElement'];
+    }
+
+    /**
+     * Unit test helper method that uses reflection to get the value of a restricted object property.
+     *
+     * @param object $object
+     * @param string $attributeName
+     * @return mixed
+     * @throws \ReflectionException
+     * @see \ReflectionProperty::setAccessible()
+     * @see \ReflectionProperty::getValue()
+     */
+    protected function getRestrictedObjectProperty(object $object, string $attributeName)
+    {
+        $reflectionAttribute = new \ReflectionProperty(get_class($object), $attributeName);
+        $reflectionAttribute->setAccessible(true);
+        return $reflectionAttribute->getValue($object);
+    }
+
+    /**
+     * Unit test helper method that uses reflection to get the default value of a restricted object property.
+     *
+     * @param string $className
+     * @param string $attributeName
+     * @return mixed
+     * @throws \ReflectionException
+     * @see \ReflectionClass::getDefaultProperties()
+     */
+    protected function getRestrictedObjectPropertyDefaultValue(string $className, string $attributeName)
+    {
+        $reflectionClass = new \ReflectionClass($className);
+        return $reflectionClass->getDefaultProperties()[$attributeName];
     }
 }

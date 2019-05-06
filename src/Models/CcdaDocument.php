@@ -140,6 +140,9 @@ class CcdaDocument
     {
         $this->simpleXmlElement = $simpleXmlElement;
         $this->namespaces = $this->simpleXmlElement->getNamespaces(true);
+        if (!in_array('', $this->namespaces)) { // Verify "Global" Namespace Element Present
+            $this->namespaces[''] = '';
+        } // End of Verify "Global" Namespace Element Present
     }
 
     /**
