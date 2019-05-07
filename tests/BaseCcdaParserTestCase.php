@@ -50,51 +50,98 @@ abstract class BaseCcdaParserTestCase extends TestCase
     }
 
     /**
-     * Generates a random (fake) SimpleXMLElement object and a corresponding array to how it should be parsed.
+     * Returns an array that can be used to build SimpleXMLElement objects for testing as well as the data array.
      *
      * @return array
-     * @throws \ReflectionException
+     * @see BaseCcdaParserTestCase::getSimpleXmlElement()
+     * @see BaseCcdaParserTestCase::getSimpleXmlElementAndDataArray()
+     * @see BaseCcdaParserTestCase::getDataArrayFromCcdaDocumentMockDataBuilderArray()
+     */
+    protected function getCcdaDocumentMockDataBuilderArray(): array
+    {
+        return [
+            'topLevelElementName'           => $this->faker->word,
+            'globalAttributeName'           => $this->faker->word,
+            'globalAttributeValue'          => $this->faker->text,
+            'globalChildName'               => $this->faker->word,
+            'globalChildValue'              => $this->faker->text,
+            'namespaceName'                 => $this->faker->word,
+            'namespaceUrl'                  => 'http://www.w3.org/2001/XMLSchema-instance',
+            'namespacedAttributeName'       => $this->faker->word,
+            'namespacedAttributeValue'      => $this->faker->text,
+            'namespacedChildName'           => $this->faker->word,
+            'namespacedChildValue'          => $this->faker->text,
+        ];
+    }
+
+    /**
+     * Returns a SimpleXMLElement based on a mock data builder array.
+     *
+     * @param array $mockData
+     * @return \SimpleXMLElement
+     * @see BaseCcdaParserTestCase::getCcdaDocumentMockDataBuilderArray()
      * @see \SimpleXMLElement::addAttribute()
      * @see \SimpleXMLElement::addChild()
-     * @see BaseCcdaParserTestCase::getRestrictedObjectPropertyDefaultValue()
+     * @see BaseCcdaParserTestCase::getSimpleXmlElementAndDataArray()
+     * @see BaseCcdaParserTestCase::getSimpleXmlElement()
      */
-    protected function getSimpleXmlElementAndDataArray(): array
+    protected function getSimpleXmlElementFromCcdaDocumentMockDataBuilderArray(array $mockData): \SimpleXMLElement
     {
-        $topLevelElementName = $this->faker->word;
-        $globalAttributeName = $this->faker->word;
-        $globalAttributeValue = $this->faker->text;
-        $globalChildName = $this->faker->word;
-        $globalChildValue = $this->faker->text;
-        $namespaceName = $this->faker->word;
-        $namespaceUrl = 'http://www.w3.org/2001/XMLSchema-instance';
-        $namespacedAttributeName = $this->faker->word;
-        $namespacedAttributeValue = $this->faker->text;
-        $namespacedChildName = $this->faker->word;
-        $namespacedChildValue = $this->faker->text;
-        $simpleXmlElement = new \SimpleXMLElement(sprintf('<%s />', $topLevelElementName));
-        $simpleXmlElement->addAttribute($globalAttributeName, $globalAttributeValue);
-        $simpleXmlElement->addChild($globalChildName, $globalChildValue);
-        $simpleXmlElement->addAttribute(sprintf('%s:%s', $namespaceName, $namespacedAttributeName), $namespacedAttributeValue, $namespaceUrl);
-        $simpleXmlElement->addChild(sprintf('%s:%s', $namespaceName, $namespacedChildName), $namespacedChildValue, $namespaceUrl);
-        $elementAttributePrefix = $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefix');
-        $elementAttributePrefixDelimiter = $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefixDelimiter');
+        $return = new \SimpleXMLElement(sprintf('<%s />', $mockData['topLevelElementName']));
+        $return->addAttribute($mockData['globalAttributeName'], $mockData['globalAttributeValue']);
+        $return->addChild($mockData['globalChildName'], $mockData['globalChildValue']);
+        $return->addAttribute(sprintf('%s:%s', $mockData['namespaceName'], $mockData['namespacedAttributeName']), $mockData['namespacedAttributeValue'], $mockData['namespaceUrl']);
+        $return->addChild(sprintf('%s:%s', $mockData['namespaceName'], $mockData['namespacedChildName']), $mockData['namespacedChildValue'], $mockData['namespaceUrl']);
+        return $return;
+    }
+
+    /**
+     * Returns a data array based on a mock data builder array.
+     *
+     * @param array $mockData
+     * @param string|null $elementAttributePrefix
+     * @param string|null $elementAttributePrefixDelimiter
+     * @return array
+     * @throws \ReflectionException
+     * @see BaseCcdaParserTestCase::getCcdaDocumentMockDataBuilderArray()
+     * @see BaseCcdaParserTestCase::getSimpleXmlElementAndDataArray()
+     */
+    protected function getDataArrayFromCcdaDocumentMockDataBuilderArray(array $mockData, string $elementAttributePrefix = null, string $elementAttributePrefixDelimiter = null): array
+    {
+        $elementAttributePrefix = (!empty($elementAttributePrefix) ? $elementAttributePrefix : $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefix'));
+        $elementAttributePrefixDelimiter = (!empty($elementAttributePrefixDelimiter) ? $elementAttributePrefixDelimiter : $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefixDelimiter'));
 
         /* This array is created in a specific order so that the unit tests will pass.  Specifically:
          * CcdaDocumentConversionMethodsTest::testToJsonMethod()
          * CcdaDocumentConversionMethodsTest::testToStringMethod()
          */
-        $array = [$topLevelElementName => [
-            $namespaceName => [
-                sprintf('%s%s%s', $elementAttributePrefix, $elementAttributePrefixDelimiter, $namespacedAttributeName) => $namespacedAttributeValue,
-                $namespacedChildName => ['value' => $namespacedChildValue],
+        $return = [$mockData['topLevelElementName'] => [
+        $mockData['namespaceName'] => [
+                sprintf('%s%s%s', $elementAttributePrefix, $elementAttributePrefixDelimiter, $mockData['namespacedAttributeName']) => $mockData['namespacedAttributeValue'],
+                $mockData['namespacedChildName'] => ['value' => $mockData['namespacedChildValue']],
             ],
-            sprintf('%s%s%s', $elementAttributePrefix, $elementAttributePrefixDelimiter, $globalAttributeName) => $globalAttributeValue,
-            $globalChildName => ['value' => $globalChildValue],
+            sprintf('%s%s%s', $elementAttributePrefix, $elementAttributePrefixDelimiter, $mockData['globalAttributeName']) => $mockData['globalAttributeValue'],
+            $mockData['globalChildName'] => ['value' => $mockData['globalChildValue']],
         ]];
 
+        return $return;
+    }
+
+    /**
+     * Generates a random (fake) SimpleXMLElement object and a corresponding array to how it should be parsed.
+     *
+     * @return array
+     * @throws \ReflectionException
+     * @see BaseCcdaParserTestCase::getCcdaDocumentMockDataBuilderArray()
+     * @see BaseCcdaParserTestCase::getDataArrayFromCcdaDocumentMockDataBuilderArray()
+     * @see BaseCcdaParserTestCase::getSimpleXmlElementFromCcdaDocumentMockDataBuilderArray()
+     */
+    protected function getSimpleXmlElementAndDataArray(): array
+    {
         return [
-            'array'             => $array,
-            'simpleXmlElement'  => $simpleXmlElement,
+            'builderArray'      => $builderArray = $this->getCcdaDocumentMockDataBuilderArray(),
+            'array'             => $this->getDataArrayFromCcdaDocumentMockDataBuilderArray($builderArray),
+            'simpleXmlElement'  => $this->getSimpleXmlElementFromCcdaDocumentMockDataBuilderArray($builderArray),
         ];
     }
 
@@ -103,11 +150,12 @@ abstract class BaseCcdaParserTestCase extends TestCase
      *
      * @return \SimpleXMLElement
      * @throws \ReflectionException
-     * @see BaseCcdaParserTestCase::getSimpleXmlElementAndDataArray()
+     * @see BaseCcdaParserTestCase::getCcdaDocumentMockDataBuilderArray()
+     * @see BaseCcdaParserTestCase::getSimpleXmlElementFromCcdaDocumentMockDataBuilderArray()
      */
     protected function getSimpleXmlElement(): \SimpleXMLElement
     {
-        return $this->getSimpleXmlElementAndDataArray()['simpleXmlElement'];
+        return $this->getSimpleXmlElementFromCcdaDocumentMockDataBuilderArray($this->getCcdaDocumentMockDataBuilderArray());
     }
 
     /**
