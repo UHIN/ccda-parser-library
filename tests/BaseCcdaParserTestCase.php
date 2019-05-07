@@ -78,14 +78,20 @@ abstract class BaseCcdaParserTestCase extends TestCase
         $simpleXmlElement->addChild(sprintf('%s:%s', $namespaceName, $namespacedChildName), $namespacedChildValue, $namespaceUrl);
         $elementAttributePrefix = $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefix');
         $elementAttributePrefixDelimiter = $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefixDelimiter');
+
+        /* This array is created in a specific order so that the unit tests will pass.  Specifically:
+         * CcdaDocumentConversionMethodsTest::testToJsonMethod()
+         * CcdaDocumentConversionMethodsTest::testToStringMethod()
+         */
         $array = [$topLevelElementName => [
-            sprintf('%s%s%s', $elementAttributePrefix, $elementAttributePrefixDelimiter, $globalAttributeName) => $globalAttributeValue,
-            $globalChildName => ['value' => $globalChildValue],
             $namespaceName => [
                 sprintf('%s%s%s', $elementAttributePrefix, $elementAttributePrefixDelimiter, $namespacedAttributeName) => $namespacedAttributeValue,
                 $namespacedChildName => ['value' => $namespacedChildValue],
             ],
+            sprintf('%s%s%s', $elementAttributePrefix, $elementAttributePrefixDelimiter, $globalAttributeName) => $globalAttributeValue,
+            $globalChildName => ['value' => $globalChildValue],
         ]];
+
         return [
             'array'             => $array,
             'simpleXmlElement'  => $simpleXmlElement,
