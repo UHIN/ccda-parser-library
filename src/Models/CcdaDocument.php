@@ -319,7 +319,7 @@ class CcdaDocument
      */
     public function __toString(): string
     {
-        return $this->toJsonString();
+        return $this->toJson();
     }
 
     /**
