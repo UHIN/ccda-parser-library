@@ -16,32 +16,31 @@ class CcdaDocumentMagicGetterTest extends BaseCcdaParserTestCase
 
     public function testGetNamespacesAttribute()
     {
-        $mockData = $this->getSimpleXmlElementAndDataArray();
-        $expected = $mockData['simpleXmlElement']->getNamespaces(true);
-        if (!in_array('', $expected)) { // Verify "Global" Namespace Element Present
-            $expected[''] = ''; // This is the same functionality as the constructor of the CcdaDocument object
-        } // End of Verify "Global" Namespace Element Present
-        $this->runGetAttributeTest($mockData['simpleXmlElement'], 'namespaces', $expected);
+        $simpleXmlMockObject = $this->getSimpleXmlElement();
+        $expected = $this->getNamespacesArrayFromSimpleXmlElement($simpleXmlMockObject);
+        $this->runGetAttributeTest($simpleXmlMockObject, 'namespaces', $expected);
     }
 
     public function testGetSimpleXmlElementAttribute()
     {
-        $mockData = $this->getSimpleXmlElementAndDataArray();
-        $this->runGetAttributeTest($mockData['simpleXmlElement'], 'simpleXmlElement', $mockData['simpleXmlElement']);
+        $simpleXmlMockObject = $this->getSimpleXmlElement();
+        $this->runGetAttributeTest($simpleXmlMockObject, 'simpleXmlElement', $simpleXmlMockObject);
     }
 
     public function testGetElementAttributePrefixAttribute()
     {
-        $mockData = $this->getSimpleXmlElementAndDataArray();
+        // This test is kind of pointless but it helps us get a higher code coverage rating
+        $simpleXmlMockObject = $this->getSimpleXmlElement();
         $expected = $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefix');
-        $this->runGetAttributeTest($mockData['simpleXmlElement'], 'elementAttributePrefix', $expected);
+        $this->runGetAttributeTest($simpleXmlMockObject, 'elementAttributePrefix', $expected);
     }
 
     public function testGetElementAttributePrefixDelimiterAttribute()
     {
-        $mockData = $this->getSimpleXmlElementAndDataArray();
+        // This test is kind of pointless but it helps us get a higher code coverage rating
+        $simpleXmlMockObject = $this->getSimpleXmlElement();
         $expected = $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefixDelimiter');
-        $this->runGetAttributeTest($mockData['simpleXmlElement'], 'elementAttributePrefixDelimiter', $expected);
+        $this->runGetAttributeTest($simpleXmlMockObject, 'elementAttributePrefixDelimiter', $expected);
     }
 
     public function testGetDataAttribute()

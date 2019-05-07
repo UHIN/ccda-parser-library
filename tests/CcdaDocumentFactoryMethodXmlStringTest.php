@@ -38,10 +38,12 @@ class CcdaDocumentFactoryMethodXmlStringTest extends BaseCcdaParserTestCase
     public function testValidXmlString()
     {
         $simpleXmlMockObject = $this->getSimpleXmlElement();
+        $expectedNamespaces = $this->getNamespacesArrayFromSimpleXmlElement($simpleXmlMockObject);
         try {
             $ccdaDocument = CcdaDocument::getDocumentFromXmlString($simpleXmlMockObject->asXML());
             $this->assertInstanceOf(CcdaDocument::class, $ccdaDocument);
             $this->assertEquals($simpleXmlMockObject, $ccdaDocument->simpleXmlElement);
+            $this->assertEquals($expectedNamespaces, $ccdaDocument->namespaces);
         } catch (\Exception $e) {
             $this->fail(sprintf('Unexpected exception thrown: %s(%s)', get_class($e), $e->getMessage()));
         }

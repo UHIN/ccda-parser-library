@@ -141,4 +141,24 @@ abstract class BaseCcdaParserTestCase extends TestCase
         $reflectionClass = new \ReflectionClass($className);
         return $reflectionClass->getDefaultProperties()[$attributeName];
     }
+
+    /**
+     * Unit test helper method to construct a namespaces array from the SimpleXMLElement object that is identical to
+     * what the CcdaDocument uses.
+     *
+     * @param \SimpleXMLElement $simpleXmlElement
+     * @return array
+     * @see \SimpleXMLElement::getNamespaces()
+     */
+    protected function getNamespacesArrayFromSimpleXmlElement(\SimpleXMLElement $simpleXmlElement): array
+    {
+        $return = $simpleXmlElement->getNamespaces(true);
+        /* The CcdaDocument object manually adds in a "global" namespace element, if it is not present in the source
+         * XML; so we will mimic this behavior for proper assertions against this object.
+         */
+        if (!in_array('', $return)) { // Verify "Global" Namespace Element Present
+            $return[''] = '';
+        } // End of Verify "Global" Namespace Element Present
+        return $return;
+    }
 }
