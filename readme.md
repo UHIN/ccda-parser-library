@@ -86,7 +86,7 @@ This basic XML data:
 
 ```
 
-will be converted into this array:
+will be converted into this JSON object:
 
 ```json
 {
