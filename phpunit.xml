@@ -14,7 +14,13 @@
     </testsuites>
     <filter>
         <whitelist>
-            <directory suffix=".php">tests</directory>
+            <file>src/Models/CcdaDocument.php</file>
+            <!--
+            ## The code is not ready yet for the directory entry below. Once more functionality has been coded,
+            ## we will have to include more of the models in our unit test code coverage report.
+
+            <directory suffix=".php">src/Models</directory>
+            -->
         </whitelist>
     </filter>
 </phpunit>
