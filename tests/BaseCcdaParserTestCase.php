@@ -108,8 +108,8 @@ abstract class BaseCcdaParserTestCase extends TestCase
      */
     protected function getDataArrayFromCcdaDocumentMockDataBuilderArray(array $mockData, string $elementAttributePrefix = null, string $elementAttributePrefixDelimiter = null): array
     {
-        $elementAttributePrefix = (!empty($elementAttributePrefix) ? $elementAttributePrefix : $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefix'));
-        $elementAttributePrefixDelimiter = (!empty($elementAttributePrefixDelimiter) ? $elementAttributePrefixDelimiter : $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefixDelimiter'));
+        $elementAttributePrefix = (!is_null($elementAttributePrefix) ? $elementAttributePrefix : $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefix'));
+        $elementAttributePrefixDelimiter = (!is_null($elementAttributePrefixDelimiter) ? $elementAttributePrefixDelimiter : $this->getRestrictedObjectPropertyDefaultValue(CcdaDocument::class, 'elementAttributePrefixDelimiter'));
 
         /* This array is created in a specific order so that the unit tests will pass.  Specifically:
          * CcdaDocumentConversionMethodsTest::testToJsonMethod()
