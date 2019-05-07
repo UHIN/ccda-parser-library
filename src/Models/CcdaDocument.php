@@ -345,10 +345,13 @@ class CcdaDocument
                 // Break Statement Intentionally Omitted to Allow Pass-Through
 
             case 'namespaces':
-            case 'simpleXmlElement':
             case 'elementAttributePrefix':
             case 'elementAttributePrefixDelimiter':
                 $return = $this->{$attributeName};
+                break;
+
+            case 'simpleXmlElement':
+                $return = clone $this->{$attributeName}; // Clone Object to Prevent Side Effects
                 break;
 
             default:

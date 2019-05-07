@@ -2,7 +2,7 @@
 
 ## Intended Use
 
-This library provides a data object for HL7 v3 XML data which can be converted to a PHP `array`, `\stdClass` object, or JSON string.
+This library provides a _(read-only)_ data object for HL7 v3 XML data which can be converted to a PHP `array`, `\stdClass` object, or JSON string. It is not intended for modifying the data structure or exporting XML.
 
 ## Supported Versions/Formats
 
@@ -74,7 +74,7 @@ $ccdaDocument->toJson()
 $ccdaDocument->__toString()
 ```
 
-#### Notes about Array (i.e. dictionary) Structure
+#### Notes about Structure
 
 This basic XML data:
 
@@ -147,11 +147,9 @@ And the data attribute and conversion methods will all be updated with the new s
 
 * [HL7 Standard: CDA<sup>&reg;</sup> Release 2](http://www.hl7.org/implement/standards/product_brief.cfm?product_id=7)
 
-* [Consolidated CDA Overview](https://www.healthit.gov/topic/standards-technology/consolidated-cda-overview)
+* [Consolidated CDA<sup>&reg;</sup> Overview](https://www.healthit.gov/topic/standards-technology/consolidated-cda-overview)
 
-* [Implementation Guide for CDA<sup>&reg;</sup> Release 2: IHE Health Story Consolidation](https://www.hl7.org/implement/standards/product_brief.cfm?product_id=258)
-
-* [Clinical Document Architecture (CDA) Wikipedia Entry](https://en.wikipedia.org/wiki/Clinical_Document_Architecture)
+* [Clinical Document Architecture (CDA<sup>&reg;</sup>) Wikipedia Entry](https://en.wikipedia.org/wiki/Clinical_Document_Architecture)
 
 ## About Us
 
