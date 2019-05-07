@@ -73,7 +73,7 @@ class CcdaDocumentFactoryMethodFilepathTest extends BaseCcdaParserTestCase
         try {
             $ccdaDocument = CcdaDocument::getDocumentFromFilepath($filepath);
             $this->assertInstanceOf(CcdaDocument::class, $ccdaDocument);
-            $this->assertSame($simpleXmlMockObject, $ccdaDocument->simpleXmlElement);
+            $this->assertEquals($simpleXmlMockObject, $ccdaDocument->simpleXmlElement);
             $this->assertEquals($expectedNamespaces, $ccdaDocument->namespaces);
         } catch (\Exception $e) {
             $this->fail(sprintf('Unexpected exception thrown: %s(%s)', get_class($e), $e->getMessage()));
