@@ -20,8 +20,16 @@ _<Insert documentation about which HL7 v3 _(i.e. C-CDA)_ implementations are sup
 
 #### Including the Library in your Project with Composer
 
+You can manually add the library to your project's `composer.json` file or use the following command:
+
 ```bash
 composer require uhin/ccda-parser
+```
+
+Then be sure to include the Composer bootstrap file:
+
+```php
+include_once('vendor/autoload.php');
 ```
 
 #### Instantiating a Data Object
@@ -72,6 +80,7 @@ $ccdaDocument->toJson()
 
 // Also returns a JSON-encoded string (used for type-casting to a string)
 $ccdaDocument->__toString()
+(string) $ccdaDocument
 ```
 
 #### Notes about Structure
@@ -153,7 +162,7 @@ And the data attribute and conversion methods will all be updated with the new s
 
 ## About Us
 
-Utah Health Information Network (UHIN) is a non-profit organization in the healthcare industry with goals of improving patient outcomes and reducing healthcare costs. If you are using any of our open source projects or would like to know more about us, we would love to hear from you.
+Utah Health Information Network _(UHIN)_ is a non-profit organization in the healthcare industry with goals of improving patient outcomes and reducing healthcare costs. If you are using any of our open source projects or would like to know more about us, we would love to hear from you.
 
 [www.uhin.org](https://www.uhin.org/)
 
@@ -166,3 +175,5 @@ Toll Free: 877-693-3071
 Address:
 1226 E 6600 S
 Murray, UT 84121
+
+Also, be sure to [check out our other projects on GitHub](https://github.com/uhin) and our [knowledge center](https://uhin.org/knowledge-center/) for more information about healthcare.
