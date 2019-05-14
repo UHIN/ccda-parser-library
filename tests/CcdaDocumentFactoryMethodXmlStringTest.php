@@ -28,9 +28,6 @@ class CcdaDocumentFactoryMethodXmlStringTest extends BaseCcdaParserTestCase
         } catch (InvalidSourceXmlData $e) {
             $this->assertEquals(sprintf('Invalid source XML string: %s', $invalidXmlString), $e->getMessage());
         } catch (\Exception $e) {
-
-            echo(sprintf("\nUnexpected Exception: %s(%s)\n", get_class($e), $e->getMessage())); // @todo Delete This
-
             $this->fail(sprintf('Incorrect exception thrown. Expected: \\Uhin\\Ccda\\Exceptions\\InvalidSourceXmlData, Actual: %s', get_class($e)));
         }
     }
