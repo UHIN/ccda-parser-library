@@ -236,7 +236,7 @@ class CcdaDocument
             $return[$currentNamespacePrefix] = [];
             foreach ($simpleXmlElement->children($currentNamespacePrefix, true) as $currentChild) { // Loop through Element Children in Current Namespace
                 if ($simpleXmlElement->{$currentChild->getName()}->count() > 1) { // Check for Repeating Child Groups (Multiple Children with Same Name or Array/List)
-                    if (!is_array($return[$currentNamespacePrefix][$currentChild->getName()])) { // Make Sure Child Name Index Is An Array
+                    if (!isset($return[$currentNamespacePrefix][$currentChild->getName()]) || !is_array($return[$currentNamespacePrefix][$currentChild->getName()])) { // Make Sure Child Name Index Is An Array
                         $return[$currentNamespacePrefix][$currentChild->getName()] = [];
                     } // End of Make Sure Child Name Index Is An Array
                     $return[$currentNamespacePrefix][$currentChild->getName()][] = $this->parseElement($currentChild);
